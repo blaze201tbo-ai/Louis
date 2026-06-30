@@ -18,7 +18,9 @@ export default {
         
         const config = await getGuildConfig(member.client, guild.id);
         const welcomeConfig = await getWelcomeConfig(member.client, guild.id);
-        const welcomeChannelId = welcomeConfig?.channelId;
+        
+        // FORZIAMO L'ID DEL CANALE SPECIFICATO DA TE
+        const welcomeChannelId = '1521299171162849310';
 
         if (welcomeConfig?.enabled && welcomeChannelId) {
             const channel = guild.channels.cache.get(welcomeChannelId);
@@ -29,8 +31,8 @@ export default {
                     return;
                 }
 
-                // --- TESTO PERSONALIZZATO DA TE ---
-                const customText = `Another survivor has been rescued, @everyone welcome ${member} in our group! now he can join us in <:l4d2:1521299171162849310>`;
+                // TESTO PERSONALIZZATO DA TE (con emoji di testo normale)
+                const customText = `Another survivor has been rescued, @everyone welcome ${member} in our group! now he can join us in :l4d2:`;
 
                 const canEmbed = permissions.has(PermissionFlagsBits.EmbedLinks);
 
@@ -45,7 +47,7 @@ export default {
                     const embed = new EmbedBuilder()
                         .setColor(welcomeConfig.welcomeEmbed?.color || getColor('success'))
                         .setTitle(embedTitle)
-                        .setDescription(customText) // Mette il testo dentro l'embed
+                        .setDescription(customText)
                         .setThumbnail(user.displayAvatarURL())
                         .addFields(
                             { name: 'User', value: `${user.tag} (${user.id})`, inline: true },
@@ -61,14 +63,14 @@ export default {
                     }
                     
                     await channel.send({ 
-                        content: `📢 @everyone ${member}!`, // Invia il ping fuori dall'embed (altrimenti non suona)
+                        content: `📢 @everyone ${member}!`, // Invia il ping fuori dall'embed per farlo suonare
                         embeds: [embed] 
                     });
                 }
             }
         }
         
-        // [Il resto del codice per ruoli, verifiche e statistiche rimane intatto...]
+        // Mantiene intatto tutto il resto delle funzioni
         if (welcomeConfig?.roleIds && welcomeConfig.roleIds.length > 0) {
             const delay = welcomeConfig.autoRoleDelay || 0;
             const singleRoleId = welcomeConfig.roleIds[0];

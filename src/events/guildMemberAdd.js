@@ -32,7 +32,7 @@ export default {
                 }
 
                 // TESTO PERSONALIZZATO DA TE (con emoji di testo normale)
-                const customText = `Another survivor has been rescued, @everyone welcome ${member} in our group! now he can join us in :l4d2:`;
+                const customText = `Another survivor has been rescued, @everyone welcome ${member} in our group! now he can join us in \:l4d2:`;
 
                 const canEmbed = permissions.has(PermissionFlagsBits.EmbedLinks);
 

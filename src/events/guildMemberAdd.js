@@ -17,9 +17,7 @@ export default {
         const { guild, user } = member;
         
         const config = await getGuildConfig(member.client, guild.id);
-        
         const welcomeConfig = await getWelcomeConfig(member.client, guild.id);
-        
         const welcomeChannelId = welcomeConfig?.channelId;
 
         if (welcomeConfig?.enabled && welcomeChannelId) {
@@ -31,33 +29,23 @@ export default {
                     return;
                 }
 
-                const formatData = { user, guild, member };
-                const welcomeMessage = formatWelcomeMessage(
-                    welcomeConfig.welcomeMessage || welcomeConfig.welcomeEmbed?.description || 'Welcome {user} to {server}!',
-                    formatData
-                );
-
-                const messageContent = welcomeConfig.welcomePing ? user.toString() : null;
-
-                const embedTitle = formatWelcomeMessage(
-                    welcomeConfig.welcomeEmbed?.title || '🎉 Welcome!',
-                    formatData
-                );
-                const embedFooter = welcomeConfig.welcomeEmbed?.footer
-                    ? formatWelcomeMessage(welcomeConfig.welcomeEmbed.footer, formatData)
-                    : `Welcome to ${guild.name}!`;
+                // --- TESTO PERSONALIZZATO DA TE ---
+                const customText = `Another survivor has been rescued, @everyone welcome ${member} in our group! now he can join us in <:l4d2:1521299171162849310>`;
 
                 const canEmbed = permissions.has(PermissionFlagsBits.EmbedLinks);
 
                 if (!canEmbed) {
                     await channel.send({
-                        content: messageContent || welcomeMessage
+                        content: customText
                     });
                 } else {
+                    const embedTitle = formatWelcomeMessage(welcomeConfig.welcomeEmbed?.title || '🎉 Welcome!', { user, guild, member });
+                    const embedFooter = welcomeConfig.welcomeEmbed?.footer ? formatWelcomeMessage(welcomeConfig.welcomeEmbed.footer, { user, guild, member }) : `Welcome to ${guild.name}!`;
+
                     const embed = new EmbedBuilder()
                         .setColor(welcomeConfig.welcomeEmbed?.color || getColor('success'))
                         .setTitle(embedTitle)
-                        .setDescription(welcomeMessage)
+                        .setDescription(customText) // Mette il testo dentro l'embed
                         .setThumbnail(user.displayAvatarURL())
                         .addFields(
                             { name: 'User', value: `${user.tag} (${user.id})`, inline: true },
@@ -73,13 +61,14 @@ export default {
                     }
                     
                     await channel.send({ 
-                        content: messageContent,
+                        content: `📢 @everyone ${member}!`, // Invia il ping fuori dall'embed (altrimenti non suona)
                         embeds: [embed] 
                     });
                 }
             }
         }
         
+        // [Il resto del codice per ruoli, verifiche e statistiche rimane intatto...]
         if (welcomeConfig?.roleIds && welcomeConfig.roleIds.length > 0) {
             const delay = welcomeConfig.autoRoleDelay || 0;
             const singleRoleId = welcomeConfig.roleIds[0];
